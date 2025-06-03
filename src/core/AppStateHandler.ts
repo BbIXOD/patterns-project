@@ -1,5 +1,9 @@
 class AppStateHandler {
-  public state: PomodoroState = new WorkState();
+  public state: PomodoroState;
+
+  public setState(state: PomodoroState) {
+    this.state = state;
+  }
 
   public transitionTo(state: PomodoroState) {
     const oldState = this.state;
