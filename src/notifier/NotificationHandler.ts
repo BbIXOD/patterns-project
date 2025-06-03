@@ -1,4 +1,9 @@
-class NotificationHandler {
+import { Subscriber } from "../interfaces/Subscriber.js";
+import { BaseEvent } from "./BaseEvent.js";
+
+export class NotificationHandler {
+  public static instance: NotificationHandler = new NotificationHandler();
+
   private readonly _subscribers: Subscriber[] = [];
 
   public subscribe(subscriber: Subscriber) {

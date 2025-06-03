@@ -1,6 +1,7 @@
-
-import { Telegraf } from 'telegraf';
-import { message } from 'telegraf/filters';
+import { AppStateHandler } from './core/AppStateHandler.js';
+import { WorkState } from './states/WorkState.js';
+import { TelegramBot } from './bot/TelegramBot.js';
+import { NotificationHandler } from './notifier/NotificationHandler.js';
 
 
 
@@ -10,15 +11,17 @@ if (!BOT_TOKEN) {
   throw new Error('BOT_TOKEN is missing in environment variables');
 }
 
-const bot = new Telegraf(BOT_TOKEN);
+const states = [];
+const bot = new TelegramBot(BOT_TOKEN, (ctx) => {
+  ctx.sendMessage('Hello! I am your pomodoro timer.');
 
-bot.start((ctx) => ctx.reply('Welcome! Send me any message, and I will echo it back.'));
-bot.on(message('text'), (ctx) => ctx.reply(ctx.message.text));
+  const appState = new AppStateHandler();
+  appState.chatId = ctx.message!.chat.id;
+  states.push(appState);
 
-bot.launch().then(() => {
-  console.log('Bot is running...');
+  const workState = new WorkState(appState);
+  workState.nextState = workState;
+  appState.transitionTo(workState);
+
 });
-
-// Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+NotificationHandler.instance.subscribe(bot);

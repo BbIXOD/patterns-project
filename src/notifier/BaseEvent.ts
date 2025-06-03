@@ -1,4 +1,4 @@
-interface BaseEvent {
+export interface BaseEvent {
   type: string;
   data: any;
 }

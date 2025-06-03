@@ -1,4 +1,4 @@
-class Timer {
+export class Timer {
   private readonly interval: number;
   private readonly callback: (elapsed: number) => void;
   private running = false;
