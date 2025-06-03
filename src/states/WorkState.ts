@@ -7,7 +7,7 @@ export class WorkState extends BaseState {
 
   start(_: WorkState): void {
     NotificationHandler.instance.notify({
-      type: 'updateTimer',
+      type: 'sendMessage',
       data: {
         chat: {
           id: this.appStateHandler.chatId!
