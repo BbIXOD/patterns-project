@@ -28,7 +28,7 @@ export class BigRestState extends BaseState {
 
   finish(): void {
     NotificationHandler.instance.notify({
-      type: 'updateTimer',
+      type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
         text: 'Big rest state finished'

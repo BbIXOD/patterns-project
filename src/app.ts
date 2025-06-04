@@ -1,15 +1,15 @@
 import { AppStateHandler } from './core/AppStateHandler.js';
-import { WorkState } from './states/WorkState.js';
 import { TelegramBot } from './bot/TelegramBot.js';
 import { NotificationHandler } from './notifier/NotificationHandler.js';
 import { CommandDispatcher } from './commands/CommandDispatcher.js';
-import { Command } from './commands/Command.js';
 import { StartCommand } from './commands/StartCommand.js';
 import { StopCommand } from './commands/StopCommand.js';
-import { finished } from 'stream';
 import { FinishedState } from './states/FinishedState.js';
+import { DebugTimerStrategy, NormalTimerStrategy } from './strategies/TimerStrategy.js';
+import { PomodoroWorkflowBuilder } from './core/PomodoroWorkflowBuilder.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
+const DEBUG = process.env.DEBUG === 'true';
 
 if (!BOT_TOKEN) {
   throw new Error('BOT_TOKEN is missing in environment variables');
@@ -17,19 +17,28 @@ if (!BOT_TOKEN) {
 
 const activeStates = new Map<number, AppStateHandler>();
 const dispatcher = new CommandDispatcher();
+const timerStrategy = DEBUG ? new DebugTimerStrategy() : new NormalTimerStrategy();
+
+function createAppState(chatId: number): AppStateHandler {
+  const builder = new PomodoroWorkflowBuilder(timerStrategy);
+  return builder
+    .setChatId(chatId)
+    .setType("infinite")
+    .build();
+}
 
 dispatcher.register(new StartCommand((chatId: number) => {
-  const appState = new AppStateHandler();
-  appState.chatId = chatId;
-  const workState = new WorkState(appState);
-  appState.transitionTo(workState);
+  const appState = createAppState(chatId);
+  appState.start();
   activeStates.set(chatId, appState);
 }));
 
 dispatcher.register(new StopCommand((chatId: number) => {
   const appState = activeStates.get(chatId);
   if (appState) {
-    appState.transitionTo(new FinishedState(appState));
+    const finishedState = new FinishedState(appState);
+    appState.transitionTo(finishedState);
+    appState.cleanup();
     activeStates.delete(chatId);
   }
 }));

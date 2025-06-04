@@ -30,6 +30,7 @@ export abstract class BaseState implements PomodoroState {
     this.elapsed += time;
     if (this.elapsed >= this._duration) {
       this.onFinish();
+      this.finish();
     }
   }
 }

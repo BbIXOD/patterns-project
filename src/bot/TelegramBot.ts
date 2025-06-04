@@ -6,13 +6,15 @@ import { Context } from "telegraf";
 
 export class TelegramBot implements Subscriber {
   private bot: Telegraf;
-  private readonly onStart: (ctx: Context) => void;
+  private readonly onMessage: (ctx: Context) => void;
   private timerIds: Map<number, number> = new Map();
 
-  constructor(token: string, onStart: (ctx: Context) => void) {
+  constructor(token: string, onMessage: (ctx: Context) => void) {
     this.bot = new Telegraf(token);
-    this.onStart = onStart;
-    this.bot.start((ctx) => this.onStart(ctx));
+    this.onMessage = onMessage;
+    this.bot.start((ctx) => this.onMessage(ctx));
+    this.bot.help((ctx) => this.onMessage(ctx));
+    this.bot.command('stop', (ctx) => this.onMessage(ctx));
 
     this.bot.launch().then(() => {
       console.log('Bot is running...');
@@ -37,9 +39,4 @@ export class TelegramBot implements Subscriber {
       }
     }
   }
-
-
-
-
-
 }

@@ -28,7 +28,7 @@ export class RestState extends BaseState {
 
   finish(): void {
     NotificationHandler.instance.notify({
-      type: 'updateTimer',
+      type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
         text: 'Rest state finished'

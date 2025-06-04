@@ -4,6 +4,7 @@ import { RestState } from "../states/RestState.js";
 import { BigRestState } from "../states/BigRestState.js";
 import { FinishedState } from "../states/FinishedState.js";
 import { BaseState } from "../states/BaseState.js";
+import { TimerStrategy } from "../strategies/TimerStrategy.js";
 
 export type PomodoroWorkflowType = "infinite" | "classic";
 
@@ -11,6 +12,11 @@ export class PomodoroWorkflowBuilder {
   private chatId?: number;
   private type: PomodoroWorkflowType = "classic";
   private cycles: number = 2;
+  private timerStrategy: TimerStrategy;
+
+  constructor(timerStrategy: TimerStrategy) {
+    this.timerStrategy = timerStrategy;
+  }
 
   setChatId(chatId: number): this {
     this.chatId = chatId;
@@ -32,7 +38,7 @@ export class PomodoroWorkflowBuilder {
       throw new Error("chatId must be set");
     }
 
-    const handler = new AppStateHandler();
+    const handler = new AppStateHandler(this.timerStrategy);
     handler.chatId = this.chatId;
 
     if (this.type === "infinite") {
