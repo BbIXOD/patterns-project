@@ -1,8 +1,6 @@
 import { Command } from "./Command.js";
-import { AppStateHandler } from "../core/AppStateHandler.js";
-import { WorkState } from "../states/WorkState.js";
 
-export class StartCommand implements Command {
+export class StopCommand implements Command {
   private action: (chatId: number) => void;
 
   constructor(action: (chatId: number) => void) {
@@ -10,7 +8,7 @@ export class StartCommand implements Command {
   }
 
   canHandle(command: string): boolean {
-    return command === "/start";
+    return command === "/stop";
   }
 
   async execute(chatId: number): Promise<void> {
