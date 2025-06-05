@@ -5,7 +5,8 @@ import { CommandDispatcher } from './commands/CommandDispatcher.js';
 import { StartCommand } from './commands/StartCommand.js';
 import { StopCommand } from './commands/StopCommand.js';
 import { FinishedState } from './states/FinishedState.js';
-import { DebugTimerStrategy, NormalTimerStrategy } from './strategies/TimerStrategy.js';
+import { NormalTimerStrategy } from './strategies/NormalTimerStrategy.js';
+import { DebugTimerStrategy } from './strategies/DebugTimerStrategy.js';
 import { PomodoroWorkflowBuilder } from './core/PomodoroWorkflowBuilder.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
