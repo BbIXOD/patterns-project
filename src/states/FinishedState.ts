@@ -6,6 +6,7 @@ export class FinishedState extends BaseState {
   static readonly duration = 0;
 
   start(_: FinishedState): void {
+    super.start(_);
     NotificationHandler.instance.notify({
       type: 'sendMessage',
       data: {

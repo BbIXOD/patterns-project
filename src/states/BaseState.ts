@@ -16,21 +16,21 @@ export abstract class BaseState implements PomodoroState {
     this._nextState = nextState;
   }
 
-  abstract start(state: PomodoroState): void;
-  finish() {
-    if (!this._nextState) {
-      throw new Error('Next state is not set');
-    }
-    this.appStateHandler.transitionTo(this._nextState);
+  start(state: PomodoroState) {
+    this.elapsed = 0;
   }
-
+  abstract finish(): void;
+  
   protected onFinish() { }
 
   update(time: number): void {
     this.elapsed += time;
     if (this.elapsed >= this._duration) {
       this.onFinish();
-      this.finish();
+      // Transition to next state if available
+      if (this._nextState) {
+        this.appStateHandler.transitionTo(this._nextState);
+      }
     }
   }
 }

@@ -32,8 +32,8 @@ export class NormalTimerStrategy implements TimerStrategy {
 
 export class DebugTimerStrategy implements TimerStrategy {
   private timerId: NodeJS.Timeout | null = null;
-  private readonly tickInterval = 100;
-  private readonly timeMultiplier = 1000;
+  private readonly tickInterval = 1000;
+  private readonly timeMultiplier = 100;
 
   startTicking(callback: (elapsed: number) => void): void {
     if (this.timerId) return;

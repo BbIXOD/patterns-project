@@ -6,6 +6,7 @@ export class RestState extends BaseState {
   static readonly duration = 5 * 60 * 1000;
 
   start(_: RestState): void {
+    super.start(_);
     NotificationHandler.instance.notify({
       type: 'sendMessage',
       data: {

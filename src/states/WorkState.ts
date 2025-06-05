@@ -6,6 +6,7 @@ export class WorkState extends BaseState {
   static readonly duration = 25 * 60 * 1000;
 
   start(_: WorkState): void {
+    super.start(_);
     NotificationHandler.instance.notify({
       type: 'sendMessage',
       data: {

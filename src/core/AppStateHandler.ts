@@ -23,7 +23,6 @@ export class AppStateHandler {
 
   public transitionTo(state: PomodoroState) {
     const oldState = this.state;
-    oldState?.finish();
     this._timerStrategy.stopTicking();
     this.state = state;
     this.state.start(oldState);
