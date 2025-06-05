@@ -1,10 +1,9 @@
 import { Command } from "./Command.js";
 import { AppStateHandler } from "../core/AppStateHandler.js";
-import { FinishedState } from "../states/FinishedState.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
 import { UserDataCollector } from "../data/UserDataCollector.js";
 
-export class StopCommand implements Command {
+export class SummaryCommand implements Command {
   private activeStates: Map<number, AppStateHandler>;
 
   constructor(activeStates: Map<number, AppStateHandler>) {
@@ -12,7 +11,7 @@ export class StopCommand implements Command {
   }
 
   canHandle(command: string): boolean {
-    return command === "/stop";
+    return command === "/summary";
   }
 
   async execute(chatId: number): Promise<void> {
@@ -20,27 +19,20 @@ export class StopCommand implements Command {
     
     await UserDataCollector.getInstance().collectUserData(
       chatId,
-      "/stop",
+      "/summary",
       appState !== undefined,
       { 
-        commandType: "stop",
+        commandType: "summary",
         hasActiveSession: appState !== undefined
       }
     );
 
-    if (appState) {
-      const finishedState = new FinishedState(appState);
-      appState.transitionTo(finishedState);
-      appState.cleanup();
-      this.activeStates.delete(chatId);
-    } else {
-      NotificationHandler.instance.notify({
-        type: 'sendMessage',
-        data: {
-          chat: { id: chatId },
-          text: '❌ No active session to stop. Use /begin <type> to start a session.'
-        }
-      });
-    }
+    NotificationHandler.instance.notify({
+      type: 'sendMessage',
+      data: {
+        chat: { id: chatId },
+        text: '📋 Summary functionality is coming soon!\n\nThis will provide:\n• Daily session summary\n• Weekly productivity overview\n• Goal progress tracking\n• Achievement highlights'
+      }
+    });
   }
 }

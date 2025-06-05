@@ -1,5 +1,6 @@
 import { Command } from "./Command.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
+import { UserDataCollector } from "../data/UserDataCollector.js";
 
 export class StartCommand implements Command {
   canHandle(command: string): boolean {
@@ -7,6 +8,13 @@ export class StartCommand implements Command {
   }
 
   async execute(chatId: number): Promise<void> {
+    await UserDataCollector.getInstance().collectUserData(
+      chatId,
+      "/start",
+      false,
+      { commandType: "start" }
+    );
+
     NotificationHandler.instance.notify({
       type: 'sendMessage',
       data: {

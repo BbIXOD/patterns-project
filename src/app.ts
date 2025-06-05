@@ -8,6 +8,9 @@ import { BeginCommand } from './commands/BeginCommand.js';
 import { PauseCommand } from './commands/PauseCommand.js';
 import { PlayCommand } from './commands/PlayCommand.js';
 import { HelpCommand } from './commands/HelpCommand.js';
+import { StatsCommand } from './commands/StatsCommand.js';
+import { SummaryCommand } from './commands/SummaryCommand.js';
+import { ExportCommand } from './commands/ExportCommand.js';
 import { NormalTimerStrategy } from './strategies/NormalTimerStrategy.js';
 import { DebugTimerStrategy } from './strategies/DebugTimerStrategy.js';
 
@@ -28,6 +31,9 @@ dispatcher.register(new PauseCommand(activeStates));
 dispatcher.register(new PlayCommand(activeStates));
 dispatcher.register(new StopCommand(activeStates));
 dispatcher.register(new HelpCommand());
+dispatcher.register(new StatsCommand(activeStates));
+dispatcher.register(new SummaryCommand(activeStates));
+dispatcher.register(new ExportCommand(activeStates));
 
 const bot = new TelegramBot(BOT_TOKEN, async (ctx) => {
   const commandText = (ctx.message && 'text' in ctx.message) ? ctx.message.text : '';

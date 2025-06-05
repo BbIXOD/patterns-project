@@ -17,7 +17,7 @@ export class BigRestState extends BaseState {
     });
   }
 
-  onUpdate(): void {
+  protected onUpdate(): void {
     const timeText = TimeFormatterFactory.formatTime('human-readable', BigRestState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',

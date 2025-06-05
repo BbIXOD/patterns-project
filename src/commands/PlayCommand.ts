@@ -1,6 +1,7 @@
 import { Command } from "./Command.js";
 import { AppStateHandler } from "../core/AppStateHandler.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
+import { UserDataCollector } from "../data/UserDataCollector.js";
 
 export class PlayCommand implements Command {
   private activeStates: Map<number, AppStateHandler>;
@@ -15,6 +16,17 @@ export class PlayCommand implements Command {
 
   async execute(chatId: number): Promise<void> {
     const appState = this.activeStates.get(chatId);
+    
+    await UserDataCollector.getInstance().collectUserData(
+      chatId,
+      "/play",
+      appState !== undefined,
+      { 
+        commandType: "play",
+        hasActiveSession: appState !== undefined
+      }
+    );
+
     if (appState) {
       appState.resume();
       NotificationHandler.instance.notify({

@@ -1,10 +1,9 @@
 import { Command } from "./Command.js";
 import { AppStateHandler } from "../core/AppStateHandler.js";
-import { FinishedState } from "../states/FinishedState.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
 import { UserDataCollector } from "../data/UserDataCollector.js";
 
-export class StopCommand implements Command {
+export class StatsCommand implements Command {
   private activeStates: Map<number, AppStateHandler>;
 
   constructor(activeStates: Map<number, AppStateHandler>) {
@@ -12,7 +11,7 @@ export class StopCommand implements Command {
   }
 
   canHandle(command: string): boolean {
-    return command === "/stop";
+    return command === "/stats";
   }
 
   async execute(chatId: number): Promise<void> {
@@ -20,27 +19,20 @@ export class StopCommand implements Command {
     
     await UserDataCollector.getInstance().collectUserData(
       chatId,
-      "/stop",
+      "/stats",
       appState !== undefined,
       { 
-        commandType: "stop",
+        commandType: "stats",
         hasActiveSession: appState !== undefined
       }
     );
 
-    if (appState) {
-      const finishedState = new FinishedState(appState);
-      appState.transitionTo(finishedState);
-      appState.cleanup();
-      this.activeStates.delete(chatId);
-    } else {
-      NotificationHandler.instance.notify({
-        type: 'sendMessage',
-        data: {
-          chat: { id: chatId },
-          text: '❌ No active session to stop. Use /begin <type> to start a session.'
-        }
-      });
-    }
+    NotificationHandler.instance.notify({
+      type: 'sendMessage',
+      data: {
+        chat: { id: chatId },
+        text: '📊 Stats functionality is coming soon!\n\nThis will show your session statistics including:\n• Total sessions completed\n• Time spent working\n• Break times taken\n• Productivity insights'
+      }
+    });
   }
 }

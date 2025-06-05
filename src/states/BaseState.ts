@@ -25,6 +25,7 @@ export abstract class BaseState implements PomodoroState {
 
   update(time: number): void {
     this.elapsed += time;
+    this.onUpdate();
     if (this.elapsed >= this._duration) {
         this.appStateHandler.transitionTo(this._nextState);
     }

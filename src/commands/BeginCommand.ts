@@ -3,6 +3,7 @@ import { AppStateHandler } from "../core/AppStateHandler.js";
 import { PomodoroWorkflowBuilder, PomodoroWorkflowType } from "../core/PomodoroWorkflowBuilder.js";
 import { TimerStrategy } from "../strategies/TimerStrategy.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
+import { UserDataCollector } from "../data/UserDataCollector.js";
 
 export class BeginCommand implements Command {
   private activeStates: Map<number, AppStateHandler>;
@@ -18,6 +19,13 @@ export class BeginCommand implements Command {
   }
 
   async execute(chatId: number, command?: string): Promise<void> {
+    await UserDataCollector.getInstance().collectUserData(
+      chatId,
+      command || "/begin",
+      this.activeStates.has(chatId),
+      { commandType: "begin" }
+    );
+
     if (this.activeStates.has(chatId)) {
       NotificationHandler.instance.notify({
         type: 'sendMessage',
@@ -65,6 +73,17 @@ export class BeginCommand implements Command {
     
     appState.start();
     this.activeStates.set(chatId, appState);
+
+    await UserDataCollector.getInstance().collectUserData(
+      chatId,
+      command || "/begin",
+      true,
+      { 
+        commandType: "begin_success",
+        workflowType: workflowType,
+        sessionStarted: true
+      }
+    );
 
     NotificationHandler.instance.notify({
       type: 'sendMessage',
