@@ -21,15 +21,12 @@ export abstract class BaseState implements PomodoroState {
   }
   abstract finish(): void;
   
-  protected onFinish() { }
+  protected onUpdate() { }
 
   update(time: number): void {
     this.elapsed += time;
     if (this.elapsed >= this._duration) {
-      this.onFinish();
-      if (this._nextState) {
         this.appStateHandler.transitionTo(this._nextState);
-      }
     }
   }
 }

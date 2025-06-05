@@ -17,7 +17,7 @@ export class BigRestState extends BaseState {
     });
   }
 
-  async update(time: number): Promise<void> {
+  onUpdate(): void {
     const timeText = TimeFormatterFactory.formatTime('human-readable', BigRestState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',
@@ -26,7 +26,6 @@ export class BigRestState extends BaseState {
         text: `🎉 Long break ${timeText}`
       }
     });
-    super.update(time);
   }
 
   finish(): void {

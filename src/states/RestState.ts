@@ -17,7 +17,7 @@ export class RestState extends BaseState {
     });
   }
 
-  async update(time: number): Promise<void> {
+  protected onUpdate(): void {
     const timeText = TimeFormatterFactory.formatTime('minutes-seconds', RestState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',
@@ -26,7 +26,6 @@ export class RestState extends BaseState {
         text: `😌 Resting ${timeText}`
       }
     });
-    super.update(time);
   }
 
   finish(): void {

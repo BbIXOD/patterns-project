@@ -18,8 +18,8 @@ export class WorkState extends BaseState {
       }
     });
   }
-  
-  async update(time: number): Promise<void> {
+
+  protected onUpdate(): void {
     const timeText = TimeFormatterFactory.formatTime('minutes-seconds', WorkState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',
@@ -30,8 +30,8 @@ export class WorkState extends BaseState {
         text: `🍅 Working ${timeText}`
       }
     });
-    super.update(time);
   }
+
   finish(): void {
     NotificationHandler.instance.notify({
       type: 'sendMessage',

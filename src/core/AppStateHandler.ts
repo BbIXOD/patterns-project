@@ -32,12 +32,12 @@ export class AppStateHandler {
     this._isPaused = false;
   }
 
-  public transitionTo(state: PomodoroState) {
+  public transitionTo(state: PomodoroState | null) {
     const oldState = this.state;
     this._timerStrategy.stopTicking();
     this.state = state;
     this._isPaused = false;
-    this.state.start(oldState);
+    this.state?.start(oldState);
     this._timerStrategy.startTicking((elapsed: number) => {
       if (!this._isPaused) {
         this.state?.update(elapsed);
