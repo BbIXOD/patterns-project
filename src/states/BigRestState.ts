@@ -1,6 +1,7 @@
 import { AppStateHandler } from "../core/AppStateHandler.js";
 import { BaseState } from "./BaseState.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
+import { TimeFormatterFactory } from "../formatters/TimeFormatterFactory.js";
 
 export class BigRestState extends BaseState {
   static readonly duration = 15 * 60 * 1000;
@@ -11,20 +12,21 @@ export class BigRestState extends BaseState {
       type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: 'Big rest state started'
+        text: '🎉 Long break started! You deserve this rest!'
       }
     });
   }
 
   async update(time: number): Promise<void> {
-    super.update(time);
+    const timeText = TimeFormatterFactory.formatTime('human-readable', BigRestState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: `Big resting for ${BigRestState.duration / 1000 - this.elapsed / 1000} seconds`
+        text: `🎉 Long break ${timeText}`
       }
     });
+    super.update(time);
   }
 
   finish(): void {
@@ -32,7 +34,7 @@ export class BigRestState extends BaseState {
       type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: 'Big rest state finished'
+        text: '🚀 Long break finished! Ready to get back to work!'
       }
     });
   }

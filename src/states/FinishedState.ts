@@ -6,14 +6,14 @@ export class FinishedState extends BaseState {
   static readonly duration = 0;
 
   start(_: FinishedState): void {
-    super.start(_);
     NotificationHandler.instance.notify({
       type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: 'Pomodoro session finished!'
+        text: '🏁 Pomodoro session complete! Well done! 🎉'
       }
     });
+    super.start(_);
   }
 
   async update(_: number): Promise<void> {

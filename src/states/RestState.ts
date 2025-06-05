@@ -1,6 +1,7 @@
 import { AppStateHandler } from "../core/AppStateHandler.js";
 import { BaseState } from "./BaseState.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
+import { TimeFormatterFactory } from "../formatters/TimeFormatterFactory.js";
 
 export class RestState extends BaseState {
   static readonly duration = 5 * 60 * 1000;
@@ -11,20 +12,21 @@ export class RestState extends BaseState {
       type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: 'Rest state started'
+        text: '😌 Short break started! Time to relax!'
       }
     });
   }
 
   async update(time: number): Promise<void> {
-    super.update(time);
+    const timeText = TimeFormatterFactory.formatTime('minutes-seconds', RestState.duration, this.elapsed);
     NotificationHandler.instance.notify({
       type: 'updateTimer',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: `Resting for ${RestState.duration / 1000 - this.elapsed / 1000} seconds`
+        text: `😌 Resting ${timeText}`
       }
     });
+    super.update(time);
   }
 
   finish(): void {
@@ -32,7 +34,7 @@ export class RestState extends BaseState {
       type: 'sendMessage',
       data: {
         chat: { id: this.appStateHandler.chatId! },
-        text: 'Rest state finished'
+        text: '⏰ Break time is over! Ready for the next session?'
       }
     });
   }
