@@ -10,7 +10,7 @@ export class CommandDispatcher {
   async dispatch(commandText: string, chatId: number): Promise<void> {
     const command = this.commands.find(cmd => cmd.canHandle(commandText));
     if (command) {
-      await command.execute(chatId);
+      await command.execute(chatId, commandText);
     }
   }
 }

@@ -15,9 +15,7 @@ export class TelegramBot implements Subscriber {
   constructor(token: string, onMessage: (ctx: Context) => void) {
     this.bot = new Telegraf(token);
     this.onMessage = onMessage;
-    this.bot.start((ctx) => this.onMessage(ctx));
-    this.bot.help((ctx) => this.onMessage(ctx));
-    this.bot.command('stop', (ctx) => this.onMessage(ctx));
+    this.bot.on('message', (ctx) => this.onMessage(ctx));
 
     this.bot.launch().then(() => {
       console.log('Bot is running...');

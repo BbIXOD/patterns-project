@@ -1,4 +1,4 @@
 export interface Command {
   canHandle(command: string): boolean;
-  execute(chatId: number): Promise<void>;
+  execute(chatId: number, command?: string): Promise<void>;
 }

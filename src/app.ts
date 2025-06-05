@@ -4,10 +4,12 @@ import { NotificationHandler } from './notifier/NotificationHandler.js';
 import { CommandDispatcher } from './commands/CommandDispatcher.js';
 import { StartCommand } from './commands/StartCommand.js';
 import { StopCommand } from './commands/StopCommand.js';
-import { FinishedState } from './states/FinishedState.js';
+import { BeginCommand } from './commands/BeginCommand.js';
+import { PauseCommand } from './commands/PauseCommand.js';
+import { PlayCommand } from './commands/PlayCommand.js';
+import { HelpCommand } from './commands/HelpCommand.js';
 import { NormalTimerStrategy } from './strategies/NormalTimerStrategy.js';
 import { DebugTimerStrategy } from './strategies/DebugTimerStrategy.js';
-import { PomodoroWorkflowBuilder } from './core/PomodoroWorkflowBuilder.js';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const DEBUG = process.env.DEBUG === 'true';
@@ -20,29 +22,12 @@ const activeStates = new Map<number, AppStateHandler>();
 const dispatcher = new CommandDispatcher();
 const timerStrategy = DEBUG ? new DebugTimerStrategy() : new NormalTimerStrategy();
 
-function createAppState(chatId: number): AppStateHandler {
-  const builder = new PomodoroWorkflowBuilder(timerStrategy);
-  return builder
-    .setChatId(chatId)
-    .setType("infinite")
-    .build();
-}
-
-dispatcher.register(new StartCommand((chatId: number) => {
-  const appState = createAppState(chatId);
-  appState.start();
-  activeStates.set(chatId, appState);
-}));
-
-dispatcher.register(new StopCommand((chatId: number) => {
-  const appState = activeStates.get(chatId);
-  if (appState) {
-    const finishedState = new FinishedState(appState);
-    appState.transitionTo(finishedState);
-    appState.cleanup();
-    activeStates.delete(chatId);
-  }
-}));
+dispatcher.register(new StartCommand());
+dispatcher.register(new BeginCommand(activeStates, timerStrategy));
+dispatcher.register(new PauseCommand(activeStates));
+dispatcher.register(new PlayCommand(activeStates));
+dispatcher.register(new StopCommand(activeStates));
+dispatcher.register(new HelpCommand());
 
 const bot = new TelegramBot(BOT_TOKEN, async (ctx) => {
   const commandText = (ctx.message && 'text' in ctx.message) ? ctx.message.text : '';

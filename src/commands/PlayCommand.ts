@@ -1,9 +1,8 @@
 import { Command } from "./Command.js";
 import { AppStateHandler } from "../core/AppStateHandler.js";
-import { FinishedState } from "../states/FinishedState.js";
 import { NotificationHandler } from "../notifier/NotificationHandler.js";
 
-export class StopCommand implements Command {
+export class PlayCommand implements Command {
   private activeStates: Map<number, AppStateHandler>;
 
   constructor(activeStates: Map<number, AppStateHandler>) {
@@ -11,22 +10,26 @@ export class StopCommand implements Command {
   }
 
   canHandle(command: string): boolean {
-    return command === "/stop";
+    return command === "/play";
   }
 
   async execute(chatId: number): Promise<void> {
     const appState = this.activeStates.get(chatId);
     if (appState) {
-      const finishedState = new FinishedState(appState);
-      appState.transitionTo(finishedState);
-      appState.cleanup();
-      this.activeStates.delete(chatId);
+      appState.resume();
+      NotificationHandler.instance.notify({
+        type: 'sendMessage',
+        data: {
+          chat: { id: chatId },
+          text: '▶️ Session resumed!'
+        }
+      });
     } else {
       NotificationHandler.instance.notify({
         type: 'sendMessage',
         data: {
           chat: { id: chatId },
-          text: '❌ No active session to stop. Use /begin <type> to start a session.'
+          text: '❌ No active session to resume. Use /begin <type> to start a session.'
         }
       });
     }
